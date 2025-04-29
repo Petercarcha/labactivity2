@@ -1,0 +1,593 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    // Redirect to the login page if the user is not logged in
+    header('Location: index.php');
+    exit();
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        line-height: 1.6;
+        color: #333;
+    }
+
+    header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: #333;
+        padding: 10px 0;
+        z-index: 10;
+    }
+
+    nav ul {
+        list-style-type: none;
+        display: flex;
+        justify-content: center;
+    }
+
+    nav ul li {
+        margin: 0 20px;
+    }
+
+    nav ul li a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 10px 15px;
+        transition: background-color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+        background-color: #ff6f61;
+        border-radius: 5px;
+    }
+
+    /* Logout Button Style */
+    .logout-button {
+        background-color: #ff6f61;
+        color: white;
+        text-decoration: none;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .logout-button:hover {
+        background-color: #e65a50;
+    }
+
+    section {
+        padding: 100px 20px;
+        margin-top: 50px;
+    }
+
+    h1, h2, h3 {
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 3rem;
+        color: #4CAF50;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        color: #333;
+    }
+
+    h3 {
+        font-size: 1.8rem;
+        color: #4CAF50;
+    }
+
+    h4 {
+        font-size: 1.5rem;
+        color: #8B4513;
+        margin-bottom: 10px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    p {
+        font-size: 1rem;
+        color: #555;
+    }
+
+    #hero {
+        text-align: center;
+        padding: 150px 20px;
+        background-image: url('img (1)/dishes.jpg');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        position: relative;
+    }
+
+    #hero h1, #hero p, #hero h4 {
+        position: relative;
+        z-index: 2;
+    }
+
+    #hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    #hero .btn {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    #hero .btn:hover {
+        background-color: #45a049;
+    }
+
+    #about {
+        background-image: url('img (1)/bg.about.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    #about::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    #about h2, #about p {
+        position: relative;
+        z-index: 2;
+    }
+
+    #about h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    #about p {
+        font-size: 1rem;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    #services {
+        background-image: url('img (1)/bg.menu.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    #services::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    #services h2, #services .service-container {
+        position: relative;
+        z-index: 2;
+    }
+
+    #services h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .service-container {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 20px;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        max-width: 100%;
+    }
+
+    .service-box {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        flex: 0 0 300px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .service-box img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .service-box:hover img {
+        transform: scale(1.05);
+    }
+
+    .service-box h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+
+    .service-box:hover h3 {
+        color: #ff6f61;
+    }
+
+    .service-box p {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.5;
+        transition: color 0.3s ease;
+    }
+
+    .service-box:hover p {
+        color: #777;
+    }
+
+    .service-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(255, 111, 97, 0.1), rgba(255, 111, 97, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1;
+    }
+
+    .service-box:hover::before {
+        opacity: 1;
+    }
+
+    #recipes {
+        background-image: url('img (1)/recipes.bg.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    #recipes::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    #recipes h2, #recipes .recipe-container {
+        position: relative;
+        z-index: 2;
+    }
+
+    .recipe-container {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 20px;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        max-width: 100%;
+    }
+
+    .recipe-box {
+        background-size: cover;
+        background-position: center;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex: 0 0 300px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    .recipe-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        z-index: 1;
+    }
+
+    .recipe-box h3,
+    .recipe-box p {
+        position: relative;
+        z-index: 2;
+    }
+
+    .recipe-box h3 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .recipe-box p {
+        font-size: 1rem;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    #contact {
+        background-image: url('img (1)/bg.contact1.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+
+    #contact::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1;
+    }
+
+    #contact h2, #contact p, #contact .contact-info {
+        position: relative;
+        z-index: 2;
+    }
+
+    #contact h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    #contact p {
+        font-size: 1rem;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .contact-info p {
+        margin-bottom: 10px;
+    }
+
+    footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+        nav ul {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        nav ul li {
+            margin: 10px 0;
+        }
+
+        nav ul li a {
+            font-size: 1.2rem;
+        }
+
+        #hero h1 {
+            font-size: 2.5rem;
+        }
+
+        #hero p {
+            font-size: 1.2rem;
+        }
+
+        .service-box, .recipe-box {
+            flex: 1 1 100%;
+            max-width: 100%;
+        }
+    }
+</style>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#recipes" class="nav-link">Recipes</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+                <li><a href="index.php" class="logout-button">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="hero">
+        <h1>Welcome to Our Dishes Hub Recipe</h1>
+        <h4>Local Food, and Delicious Food for Everyone</h4>
+    </section>
+
+    <section id="about">
+        <h2>About Us</h2>
+        <p>At Food Hub, we are passionate about connecting you with the best local farmers and food producers. We bring delicious food to your table while supporting our community.</p>
+    </section>
+
+    <section id="services">
+        <h2>Our Services</h2>
+        <div class="service-container">
+            <div class="service-box">
+                <img src="img (1)/adobo.jpg" alt="abodo">
+                <h3>Adobong Manok</h3>
+                <p>Classic Filipino chicken adobo, marinated and simmered to perfection.</p>
+            </div>
+            <div class="service-box">
+                <img src="img (1)/kambing.jpg" alt="kaldereta">
+                <h3>Kalderatang Kambing</h3>
+                <p>Hearty goat stew with rich flavors and tender meat.</p>
+            </div>
+            <div class="service-box">
+                <img src="img (1)/papaitan.jpg" alt="papaitan">
+                <h3>Papaitang Kambing</h3>
+                <p>Traditional goat dish with a unique bitter flavor.</p>
+            </div>
+            <div class="service-box">
+                <img src="img (1)/sinigang.jpg" alt="sinigang">
+                <h3>Sinigang na Baboy</h3>
+                <p>Sour and savory pork soup with tamarind base and fresh vegetables.</p>
+            </div>
+            <div class="service-box">
+                <img src="img (1)/karekare.jpg" alt="kare-kare">
+                <h3>Kare-Kare</h3>
+                <p>Oxtail and vegetable stew in rich peanut sauce, served with bagoong.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="recipes">
+        <h2>Recipes</h2>
+        <div class="recipe-container">
+            <div class="recipe-box" style="background-image: url('img (1)/adobo.jpg');">
+                <h3>Adobong Manok</h3>
+                <p><strong>Ingredients:</strong> Chicken, soy sauce, vinegar, garlic, bay leaves, peppercorns, potatoes.</p>
+                <p><strong>Instructions:</strong> Marinate chicken in soy sauce, vinegar, and spices for at least 30 minutes. Cook the chicken with the marinade over medium heat for 30-40 minutes, adding potatoes until soft. Serve with rice!</p>
+            </div>
+            <div class="recipe-box" style="background-image: url('img (1)/kambing.jpg');">
+                <h3>Kalderatang Kambing</h3>
+                <p><strong>Ingredients:</strong> Goat meat, potatoes, carrots, bell peppers, tomato sauce, beef broth, onions, garlic, bay leaves, salt, pepper.</p>
+                <p><strong>Instructions:</strong> Sauté onions and garlic in oil. Add goat meat and brown. Add tomatoes, broth, and seasonings, then simmer for 1-2 hours until tender. Add vegetables and cook until soft. Serve hot!</p>
+            </div>
+            <div class="recipe-box" style="background-image: url('img (1)/papaitan.jpg');">
+                <h3>Papaitang Kambing</h3>
+                <p><strong>Ingredients:</strong> Goat meat, bile, green chili peppers, onions, garlic, vinegar, salt, pepper, bay leaves.</p>
+                <p><strong>Instructions:</strong> Boil goat meat until tender. Sauté onions, garlic, and chili peppers, then add the boiled meat and bile. Add vinegar, bay leaves, and seasoning, and simmer until fully cooked. Serve with rice!</p>
+            </div>
+            <div class="recipe-box" style="background-image: url('img (1)/sinigang.jpg');">
+                <h3>Sinigang na Baboy</h3>
+                <p><strong>Ingredients:</strong> Pork belly or ribs, onion, tomatoes, radish, eggplant, okra, kangkong, green chili peppers, sinigang mix (tamarind soup base), water, fish sauce or salt.</p>
+                <p><strong>Instructions:</strong> Boil pork until tender. Add sinigang mix and vegetables (radish, eggplant, okra, and chili peppers). Simmer until vegetables are cooked. Add kangkong and season with fish sauce or salt. Serve hot with rice!</p>
+            </div>
+            <div class="recipe-box" style="background-image: url('img (1)/karekare.jpg');">
+                <h3>Kare-Kare</h3>
+                <p><strong>Ingredients:</strong> Oxtail, peanut butter, ground toasted rice (or rice flour), onion, garlic, banana heart, string beans, eggplant, annatto seeds, water or beef broth, fish sauce or salt, shrimp paste (bagoong).</p>
+                <p><strong>Instructions:</strong> Boil oxtail until tender. Sauté garlic and onion, then add peanut butter and ground rice. Combine with oxtail and annatto water. Add vegetables (banana heart, string beans, and eggplant) and simmer until tender. Serve with shrimp paste and rice!</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>Have questions? Reach out to us!</p>
+        <div class="contact-info">
+            <p>Email: <a href="mailto:Agustinejonard@gmail.com">Johnleonardagustin@gmail.com</a></p>
+            <p>Phone: +63 9786453221</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Food Hub. All Rights Reserved.</p>
+        <p> DEVELOPERS</p>
+        <p>&copy; John Leonard Agusin</p>
+        <p>&copy; Peter Andrew Carcha</p>
+    </footer>
+</body>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        const studentId = document.getElementById('studentId').value.trim();
+        const password = document.getElementById('password').value.trim();
+    
+        if (!studentId || !password) {
+            alert('All fields are required.');
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
+</html>
